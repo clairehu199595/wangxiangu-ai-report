@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>望仙谷官方 AI服务新模式立项汇报 · 滑动版</title>
+<style>
+:root{
+  --paper:#F5EFE6; --ink:#2E2018; --gold:#C47B33; --gold-bright:#eaa712;
+  --red:#B24A36; --line:#E8DCD0; --deep:#35240f; --muted:rgba(46,32,24,.66);
+  --serif:"Avenir Next","Helvetica Neue","Source Han Serif SC","Source Han Serif CN","Noto Serif CJK SC","思源宋体",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  --latin:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+button{font:inherit;cursor:pointer}
+
+/* ===== 轨道与幻灯片 ===== */
+#viewport{position:fixed;inset:0;overflow:hidden}
+#track{display:flex;height:100vh;transition:transform .55s cubic-bezier(.25,.8,.25,1)}
+.slide{width:100vw;height:100vh;flex:none;overflow:hidden;position:relative;padding:64px 84px 96px;display:flex;flex-direction:column}
+.slide-inner{max-width:1240px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* 章节头 */
+.kicker{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:15px;font-weight:800;letter-spacing:.14em}
+.kicker::before{content:"";width:26px;height:2px;background:var(--gold)}
+h1.st{font-family:var(--serif);font-size:clamp(30px,3.6vw,52px);line-height:1.2;font-weight:700;margin:14px 0 10px;letter-spacing:.01em}
+.lede{color:var(--muted);font-size:19px;line-height:1.85;max-width:960px}
+
+/* 卡片 */
+.cards{display:grid;gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 26px}
+.card h3{font-size:22px;margin:0 0 8px}
+.card h3 .num{color:var(--gold-bright);font-family:var(--latin);font-weight:700;margin-right:10px}
+.card p{color:var(--muted);font-size:17px;line-height:1.75;margin:0}
+.tag{display:inline-block;font-size:13px;font-weight:800;color:var(--gold);background:rgba(196,123,51,.1);border-radius:999px;padding:3px 12px;margin-bottom:10px;letter-spacing:.06em}
+
+/* 封面 */
+.slide.cover{padding:0;color:#fff}
+.cover-bg{position:absolute;inset:0;background:url("/assets/hero-valley.jpg") center/cover no-repeat}
+.cover-mask{position:absolute;inset:0;background:linear-gradient(100deg,rgba(150,74,18,.97) 0%,rgba(168,86,24,.9) 34%,rgba(176,92,30,.42) 62%,rgba(30,16,6,.25) 100%)}
+.cover-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 9vw}
+.cover-title{font-family:var(--serif);font-size:clamp(40px,5.4vw,84px);line-height:1.18;font-weight:700}
+.cover-sub{margin-top:26px;font-size:clamp(17px,1.5vw,24px);color:rgba(255,255,255,.92);letter-spacing:.02em}
+.cover-by{margin-top:64px;font-size:16px;color:rgba(255,255,255,.78);line-height:1.9}
+.cover-logo{position:absolute;top:40px;left:9vw;z-index:2;width:150px;filter:brightness(0) invert(1);opacity:.95}
+.cover-hint{position:absolute;right:9vw;bottom:44px;z-index:2;font-size:14px;color:rgba(255,255,255,.75);letter-spacing:.1em}
+
+/* 议题概述 */
+.agenda-grid{grid-template-columns:repeat(4,1fr);margin-top:30px}
+.agenda-grid .card{min-height:150px}
+.agenda-grid .card h3{font-size:22px}
+.agenda-grid .card h3 .num{font-size:24px}
+
+.overview-text{font-family:var(--serif);font-size:clamp(21px,2vw,30px);line-height:1.9;font-weight:500;max-width:1080px}
+.overview-ask{margin-top:auto;background:var(--deep);color:#fff;border-radius:20px;padding:30px 38px;display:flex;align-items:center;gap:26px}
+.overview-ask .lab{font-size:14px;font-weight:800;color:var(--gold-bright);letter-spacing:.12em;white-space:nowrap}
+.overview-ask .items{font-size:clamp(17px,1.6vw,24px);font-weight:700;line-height:1.7}
+
+/* 痛点 */
+.pain-grid{grid-template-columns:repeat(3,1fr);margin-top:26px}
+.pain-grid .card{min-height:230px}
+.verdict{margin-top:20px;background:var(--deep);color:#fff;border-radius:18px;padding:24px 32px;font-size:clamp(17px,1.6vw,24px);line-height:1.7;font-weight:500}
+.channel-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.channel-chips span{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 16px;font-size:15px;color:var(--muted)}
+
+/* 咨询触点表 */
+.touch-grid{grid-template-columns:1fr 1fr;margin-top:22px;flex:1;min-height:0}
+.touch-grid .card{padding:22px 26px;overflow:auto}
+.touch-grid .card>strong{display:block;font-size:22px;margin-bottom:2px}
+.touch-grid .card>.sub{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+.touch-row{display:grid;grid-template-columns:minmax(130px,40%) 1fr;gap:14px;padding:9px 0;border-bottom:1px solid rgba(46,32,24,.1);font-size:15px;line-height:1.55}
+.touch-row:last-child{border-bottom:0}
+.touch-row strong{color:var(--ink);font-weight:700}
+.touch-row span{color:var(--muted)}
+
+/* 案例 */
+.case-slide{display:grid;grid-template-columns:1fr 1.15fr;gap:40px;flex:1;min-height:0;margin-top:18px}
+.case-text{display:flex;flex-direction:column;justify-content:center}
+.example-q{font-family:var(--serif);font-size:clamp(24px,2.6vw,38px);font-weight:700;line-height:1.35;margin:10px 0 18px}
+.example-a{font-size:17px;line-height:1.8;color:var(--muted);padding-left:18px;border-left:3px solid var(--gold)}
+.example-r{margin-top:16px;font-size:17px;line-height:1.8;color:var(--red);font-weight:600;padding-left:18px;border-left:3px solid var(--red)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-content:center;min-height:0}
+.shots figure{display:flex;flex-direction:column;min-height:0}
+.shots img{width:100%;height:min(50vh,480px);object-fit:contain;object-position:top;background:#f3ede2;border:1px solid var(--line);border-radius:14px}
+.shots figcaption{margin-top:8px;font-size:13px;color:var(--muted);line-height:1.55;text-align:center}
+.shots.stack{grid-template-columns:1fr;gap:12px}
+.shots.stack img{width:100%;height:auto;max-height:30vh;object-fit:contain}
+
+/* 解决方案 */
+.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;flex:1;min-height:0;margin-top:18px}
+.persona{background:var(--deep);color:#fff;border-radius:20px;padding:26px 30px;display:flex;flex-direction:column;min-height:0}
+.persona .tag{background:rgba(234,167,18,.16);color:var(--gold-bright)}
+.persona h3{font-family:var(--serif);font-size:26px;margin:6px 0 12px}
+.persona .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.persona .chips span{border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 14px;font-size:14px;color:rgba(255,255,255,.85)}
+.qlist{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:auto;align-content:start}
+.qitem{text-align:left;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 12px;color:#fff}
+.qitem .q-t{font-size:14px;font-weight:700;line-height:1.5}
+.qitem .q-s{display:block;font-size:12px;color:rgba(255,255,255,.62);line-height:1.55;margin-top:3px}
+.phone-box{position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#efe6d6,#e6d9c2);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.phone-frame{width:340px;height:600px;border-radius:36px;border:10px solid var(--ink);overflow:hidden;background:#fff;box-shadow:0 24px 60px rgba(46,32,24,.25);flex:none}
+.phone-frame iframe{width:680px;height:1200px;border:0;transform:scale(.5);transform-origin:0 0;margin:-12px 0 0 -12px;background:var(--ink)}
+
+/* 价值 */
+.value-grid{grid-template-columns:repeat(3,1fr);margin-top:24px}
+.value-grid .card{min-height:190px}
+
+/* 架构 */
+.arch{display:flex;flex-direction:column;align-items:center;margin-top:14px;flex:1;justify-content:center}
+.arch-tier{width:100%;max-width:980px}
+.arch-label{font-size:14px;font-weight:800;color:var(--gold);letter-spacing:.1em;margin-bottom:8px}
+.arch-nodes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.arch-nodes span{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 10px;text-align:center;font-size:16px;font-weight:600}
+.arch-nodes.dark span{background:var(--ink);color:#fff;border-color:var(--ink)}
+.arch-core{display:flex;align-items:center;justify-content:center;gap:14px;background:linear-gradient(135deg,var(--gold),#a8641f);color:#fff;border-radius:16px;padding:16px;margin:12px 0;font-size:19px;font-weight:700}
+.arch-arrow{text-align:center;color:var(--gold);font-size:22px;line-height:1}
+
+/* AI 与小程序：从功能入口到决策陪伴 */
+.ai-compare{display:grid;grid-template-columns:.94fr 1.16fr;gap:22px;margin-top:18px;flex:1;min-height:0}
+.legacy-panel,.ai-panel{border-radius:22px;padding:26px 30px;min-height:0;display:flex;flex-direction:column}
+.legacy-panel{background:#eee4d5;border:1px solid var(--line)}
+.ai-panel{background:var(--deep);color:#fff}
+.panel-overline{font-size:13px;font-weight:800;letter-spacing:.12em;color:var(--gold);margin-bottom:10px}
+.legacy-panel h3,.ai-panel h3{font-family:var(--serif);font-size:clamp(24px,2.35vw,34px);line-height:1.25;margin-bottom:8px}
+.legacy-panel>p,.ai-panel>p{font-size:16px;line-height:1.7;color:var(--muted)}
+.ai-panel>p{color:rgba(255,255,255,.7)}
+.legacy-flow{display:grid;gap:10px;margin:auto 0}
+.legacy-step{position:relative;background:rgba(255,255,255,.78);border:1px solid rgba(46,32,24,.1);border-radius:14px;padding:13px 16px 13px 52px;font-size:16px;font-weight:700;line-height:1.45}
+.legacy-step::before{content:attr(data-step);position:absolute;left:16px;top:13px;color:var(--gold);font-family:var(--latin);font-size:13px;font-weight:800}
+.legacy-arrow{text-align:center;color:#a88e72;font-size:20px;line-height:.7}
+.ai-question{margin-top:8px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);border-radius:15px;padding:15px 18px;font-size:17px;line-height:1.55;font-weight:700}
+.ai-question span{display:block;color:var(--gold-bright);font-size:12px;letter-spacing:.1em;margin-bottom:5px}
+.ai-think{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0}
+.ai-think span{border:1px solid rgba(234,167,18,.38);border-radius:999px;color:#ffe2a4;background:rgba(234,167,18,.1);padding:5px 10px;font-size:13px;font-weight:700}
+.ai-result{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto}
+.ai-result div{background:#fff;color:var(--ink);border-radius:12px;padding:10px 12px;min-height:66px}
+.ai-result b{display:block;font-size:14px;margin-bottom:3px}.ai-result span{font-size:12.5px;color:var(--muted);line-height:1.45}
+.compare-foundation{grid-column:1/-1;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 22px;display:grid;grid-template-columns:1.2fr 2fr;gap:20px;align-items:center}
+.foundation-title{font-family:var(--serif);font-size:20px;line-height:1.35;font-weight:700}.foundation-title strong{color:var(--gold)}
+.foundation-nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.foundation-nodes span{display:block;text-align:center;border-radius:10px;background:var(--paper);padding:10px 8px;font-size:14px;font-weight:700;line-height:1.4}.foundation-nodes em{display:block;color:var(--gold);font-style:normal;font-size:11px;letter-spacing:.07em;margin-bottom:2px}
+
+/* 落地执行 */
+.phase-grid{grid-template-columns:repeat(4,1fr);margin-top:22px}
+.phase-grid .card{padding:20px 22px;min-height:180px}
+.phase-grid .card .p-num{font-family:var(--latin);color:var(--gold-bright);font-weight:700;font-size:15px}
+.phase-grid .card h3{font-size:20px;margin:8px 0 6px}
+.p1-list{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 26px}
+.p1-list ul{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;list-style:none;margin-top:10px}
+.p1-list li{font-size:16px;line-height:1.6;color:var(--muted);padding-left:22px;position:relative}
+.p1-list li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:2px;background:var(--gold)}
+
+/* 投入产出 */
+.roi-grid{grid-template-columns:1fr 1fr;margin-top:20px}
+.roi-grid .plan ol{margin:10px 0 0 20px;line-height:2;font-size:17px;color:var(--muted)}
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.metric-row .card{padding:18px 20px}
+.metric-row .card h3{font-size:18px}
+.metric-row .card p{font-size:14.5px}
+.gate{margin-top:16px;background:var(--deep);color:#fff;border-radius:16px;padding:18px 28px;font-size:clamp(15px,1.4vw,20px);line-height:1.7}
+.gate b{color:var(--gold-bright)}
+
+/* 结束 */
+.slide.end{background:var(--deep);color:#fff}
+.end-quote{font-family:var(--serif);font-size:clamp(30px,3.8vw,56px);line-height:1.5;font-weight:700;margin:auto 0}
+.end-quote em{color:var(--gold-bright);font-style:normal}
+.slide.centered .slide-inner{justify-content:center;text-align:center}
+.slide.centered .end-ask{text-align:left;max-width:980px;width:100%;margin-left:auto;margin-right:auto}
+.end-ask{margin-top:36px;display:grid;grid-template-columns:1fr;gap:12px}
+.end-ask div{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:16px 22px;background:rgba(255,255,255,.05);display:flex;align-items:baseline;gap:20px}
+.end-ask b{flex:none;width:150px;font-size:17px;color:var(--gold-bright)}
+.end-ask span{font-size:15px;color:rgba(255,255,255,.78);line-height:1.65;display:block}
+
+/* 服务全景模块 */
+.mod-grid{grid-template-columns:1fr 1fr;margin-top:22px;flex:1;min-height:0}
+.mod-grid .card{display:flex;flex-direction:column;min-height:0;padding:20px 24px}
+.mod-grid .card h3{font-size:20px;line-height:1.4;margin:8px 0 6px}
+.mod-grid .card>p{font-size:14.5px;margin-bottom:8px}
+.mod-grid .card ul{list-style:none;margin-top:2px;overflow:auto}
+.mod-grid .card li{font-size:14px;color:var(--muted);line-height:1.6;padding-left:18px;position:relative;margin-bottom:5px}
+.mod-grid .card li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:2px;background:var(--gold)}
+
+/* 图片灯箱 */
+.shots img{cursor:zoom-in}
+#lightbox{position:fixed;inset:0;z-index:100;background:rgba(28,18,10,.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:40px;cursor:zoom-out}
+#lightbox.open{display:flex}
+#lightbox img{max-width:92vw;max-height:82vh;object-fit:contain;border-radius:12px;background:#fff}
+#lightbox .lb-cap{color:rgba(255,255,255,.85);font-size:15px;text-align:center;max-width:80vw;line-height:1.6}
+#lightbox .lb-close{position:absolute;top:22px;right:30px;color:#fff;font-size:30px;background:none;border:0;line-height:1}
+
+/* 导航 */
+#hud{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;justify-content:center;gap:22px;padding:16px;pointer-events:none}
+#hud>*{pointer-events:auto}
+#dots{display:flex;gap:9px;background:rgba(46,32,24,.72);backdrop-filter:blur(8px);border-radius:999px;padding:10px 16px}
+#dots button{width:9px;height:9px;border-radius:50%;border:0;background:rgba(255,255,255,.4);transition:.25s;padding:0}
+#dots button.on{background:var(--gold-bright);transform:scale(1.35)}
+#counter{font-family:var(--latin);font-size:13px;color:var(--muted);background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:999px;padding:8px 16px}
+.nav-arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:50;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.85);color:var(--ink);font-size:20px;display:grid;place-items:center;box-shadow:0 6px 20px rgba(46,32,24,.12)}
+#prev{left:22px}#next{right:22px}
+.nav-arrow:disabled{opacity:.3;cursor:default}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--gold);z-index:60;transition:width .4s}
+
+@media (max-width:900px){
+  .slide{padding:44px 26px 92px}
+  .pain-grid,.value-grid{grid-template-columns:1fr}
+  .case-grid,.demo-wrap,.roi-grid{grid-template-columns:1fr}
+  .phase-grid,.metric-row{grid-template-columns:1fr 1fr}
+  .p1-list ul{grid-template-columns:1fr}
+  .phone-frame{width:300px;height:540px}
+  .arch-nodes{grid-template-columns:1fr 1fr}
+  .ai-compare{grid-template-columns:1fr}.compare-foundation{grid-template-columns:1fr}.foundation-nodes{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport">
+<div id="track">
+
+<!-- 1 封面 -->
+<section class="slide cover">
+  <div class="cover-bg"></div>
+  <div class="cover-mask"></div>
+  <img class="cover-logo" src="/assets/logo.png" alt="望仙谷">
+  <div class="cover-content">
+    <div class="cover-title">望仙谷官方<br>AI服务新模式立项汇报</div>
+    <div class="cover-sub">以对话式服务承接游客需求，拓展新体验与新交易机会。</div>
+    <div class="cover-by">by 市场营销中心 · 自营渠道部<br>2026.09</div>
+  </div>
+  <div class="cover-hint">→ 滑动或点击右侧箭头开始</div>
+</section>
+
+<!-- 2 议题概述 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">议题概述 / OVERVIEW</span>
+    <p class="overview-text" style="margin-top:22px">外部 AI 正成为游客新的决策入口，品牌对信息与服务入口的主导权正在外移。本次拟启动官方智能服务试点，以信息治理和 AI 工具为底座，创造新服务、新体验与新交易，验证复购、客单及新增长机会。</p>
+    <div class="cards agenda-grid">
+      <div class="card"><h3><span class="num">01</span>现存问题</h3><p>游客的问题谁来回答：外部信息失真，内部口径不一</p></div>
+      <div class="card"><h3><span class="num">02</span>解决方案</h3><p>官方智能服务试点：一个入口回答多场景问题</p></div>
+      <div class="card"><h3><span class="num">03</span>执行落地</h3><p>四步试点路径与四条项目红线，风险可控</p></div>
+      <div class="card"><h3><span class="num">04</span>投入产出</h3><p>费用构成与治理团队，数据验收后再扩大投入</p></div>
+    </div>
+    <div class="overview-ask">
+      <span class="lab">本次需要明确</span>
+      <span class="items">是否立项 · 项目范围 · 业务负责人 · 协同责任 · 阶段投入权限</span>
+    </div>
+  </div>
+</section>
+
+<!-- 3 01 现存问题 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">01 · 现存问题 / THE PROBLEM</span>
+    <h1 class="st">游客的问题，谁来回答？</h1>
+    <p class="lede">多渠道、多触点、多回答形式：同一个问题，外部 AI 有 AI 的说法，员工有员工的说法，评论区有评论区的说法。游客得到的答案取决于他在哪里问——而不是取决于官方口径。</p>
+    <div class="channel-chips">
+      <span>抖音评论区</span><span>小红书笔记评论区</span><span>微博超话</span><span>豆包 / DeepSeek 等外部 AI</span><span>官网在线客服</span><span>电话客服</span><span>FAQ 页面</span>
+    </div>
+    <div class="cards pain-grid">
+      <div class="card"><h3><span class="num">01</span>官方信息解释权外溢</h3><p>游客通过外部 AI 与二手信息做决策，官方口径缺位，价格、政策失真直接影响出行预期与口碑。</p></div>
+      <div class="card"><h3><span class="num">02</span>人工产能耗在重复问题上</h3><p>大量咨询是票价、停车、宠物等高频重复问题，人工反复作答，挤占了真正需要人的服务场景。</p></div>
+      <div class="card"><h3><span class="num">03</span>业务系统体验待提升</h3><p>票务、酒店、演艺和售后信息分散在不同系统与页面，咨询止步于问答，无法延伸为服务办理与交易机会。</p></div>
+    </div>
+    <div class="verdict">问题不在于某一个渠道答错，而在于官方服务没有系统化：口径靠人记、知识靠人找、答复靠临场——每个触点都在各自为战。</div>
+  </div>
+</section>
+
+<!-- 4 咨询触点 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">01 · 现存问题 / 咨询触点</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">游客的咨询触点：官方与非官方渠道</h1>
+    <div class="cards touch-grid">
+      <div class="card">
+        <strong>官方渠道</strong>
+        <span class="sub">我们能直接管理的触点</span>
+        <div class="touch-row"><strong>官方客服电话</strong><span>景区公示电话、400 热线</span></div>
+        <div class="touch-row"><strong>官方自媒体私信/留言</strong><span>微信公众号后台、抖音私信、小红书私信</span></div>
+        <div class="touch-row"><strong>官方直播互动</strong><span>抖音/视频号直播间弹幕提问、连麦</span></div>
+        <div class="touch-row"><strong>官网/小程序客服</strong><span>官网在线客服、电话客服、FAQ 页面</span></div>
+        <div class="touch-row"><strong>官方邮箱/表单</strong><span>官网联系表单、投诉建议邮箱</span></div>
+        <div class="touch-row"><strong>OTA 官方客服</strong><span>携程/美团/飞猪在线客服（景区入驻应答）</span></div>
+      </div>
+      <div class="card">
+        <strong>非官方渠道</strong>
+        <span class="sub">我们无法直接管控、但游客正在使用的触点</span>
+        <div class="touch-row"><strong>社交平台评论区</strong><span>抖音评论区、小红书笔记评论区等</span></div>
+        <div class="touch-row"><strong>用户问答区</strong><span>携程「问大家」、马蜂窝问答</span></div>
+        <div class="touch-row"><strong>社群/群聊</strong><span>微信群、QQ 群、小红书群聊</span></div>
+        <div class="touch-row"><strong>KOL/KOC 私信</strong><span>网红博主私信、直播间提问</span></div>
+        <div class="touch-row"><strong>熟人社交</strong><span>微信好友、朋友圈提问、亲友推荐</span></div>
+        <div class="touch-row"><strong>AI 与搜索问答</strong><span>DeepSeek、豆包、百度 AI 摘要</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 案例 1 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">01 · 现存问题 / 案例 1</span>
+    <div class="case-slide">
+      <div class="case-text">
+        <span class="tag">案例 1 · 外部 AI 平台</span>
+        <div class="example-q">"望仙谷门票多少钱？""怎么停车？"</div>
+        <div class="example-a">外部 AI 引用了过时的网络信息或第三方博主内容，给出的票价与官方实际票价不一致。</div>
+        <div class="example-r">游客带着错误的预期做出行决策。</div>
+      </div>
+      <div class="shots">
+        <figure>
+          <img src="/assets/evidence/external-ai-ticket.PNG" alt="外部AI回答望仙谷票价截图">
+          <figcaption>外部 AI 生成的票价信息</figcaption>
+        </figure>
+        <figure>
+          <img src="/assets/evidence/external-ai-parking.PNG" alt="外部AI回答停车收费截图">
+          <figcaption>外部 AI 称停车费约 10 元/天（实际免费）</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 案例 2 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">01 · 现存问题 / 案例 2</span>
+    <div class="case-slide">
+      <div class="case-text">
+        <span class="tag">案例 2 · 内部员工口径</span>
+        <div class="example-q">"悬崖图书馆怎么进去？"</div>
+        <div class="example-a">游客在小红书私聊官方账号，客服答复：面向所有人开放，需从民宿中心一侧进入。</div>
+        <div class="example-r">现场民宿接待中心前台却告知"只面对酒店客人开放"，现场也无明确指示。游客最终没找到入口："好不容易爬上去了发现进不去，体验感非常不好。"</div>
+      </div>
+      <div class="shots stack">
+        <figure>
+          <img src="/assets/evidence/internal-chat-1.PNG" alt="小红书官方账号对话截图 1">
+          <figcaption>官方账号答复：面向所有人开放，从民宿中心进入</figcaption>
+        </figure>
+        <figure>
+          <img src="/assets/evidence/internal-chat-2.PNG" alt="小红书官方账号对话截图 2">
+          <figcaption>游客反馈：前台称只面对酒店客人开放，现场无指示</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 02 解决方案 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">02 · 解决方案 / SOLUTION</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">一个入口，完成多场景需求对话。</h1>
+    <p class="lede" style="font-size:17px">问题清楚了：渠道分散、口径不一、服务没有系统化。解决方案不是再增加一个渠道，而是建立一个统一入口。下面用一家四口带宠物自驾的真实场景，演示游客可能问到的一些问题。</p>
+    <div class="demo-wrap">
+      <div class="persona">
+        <span class="tag">游客画像</span>
+        <h3>一家四口 + 宠物狗 + 教师 · 南昌自驾</h3>
+        <div class="chips"><span>夫妇 + 12岁 + 6岁</span><span>宠物狗一只</span><span>其中一位持教师证</span></div>
+        <div class="qlist">
+          <div class="qitem"><div class="q-t">01 宠物能不能带</div><span class="q-s">能带狗吗？需要狗证、疫苗本、牵引绳吗？演出、餐厅能带狗进吗？</span></div>
+          <div class="qitem"><div class="q-t">02 两大两小怎么买票</div><span class="q-s">6岁要买票吗？12岁算儿童还是学生？教师有优惠吗？</span></div>
+          <div class="qitem"><div class="q-t">03 一家四口带狗怎么住</div><span class="q-s">哪家酒店能带狗？清洁费多少？一家四口住一间行吗？</span></div>
+          <div class="qitem"><div class="q-t">04 南昌自驾怎么停车</div><span class="q-s">怎么走？多久？停哪个停车场近？新能源能充电吗？</span></div>
+          <div class="qitem"><div class="q-t">05 带娃带狗怎么玩</div><span class="q-s">两天一夜怎么安排？6岁孩子能走完全程吗？夜景几点开始？</span></div>
+          <div class="qitem"><div class="q-t">06 景区里吃什么</div><span class="q-s">吃饭贵不贵？有适合孩子的餐吗？能带狗进餐厅吗？</span></div>
+          <div class="qitem"><div class="q-t">07 算清总预算</div><span class="q-s">门票、酒店、餐饮加起来大概多少？怎么订最划算？</span></div>
+          <div class="qitem"><div class="q-t">08 出发前最后确认</div><span class="q-s">下雨天能玩吗？能退票吗？宠物要提前报备吗？</span></div>
+        </div>
+      </div>
+      <div class="phone-box">
+        <div class="phone-frame"><iframe src="/agent-demo/mobile.html?v=20260917a" title="望小仙手机端演示" loading="lazy"></iframe></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 立项价值 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">立项价值 · VALUE</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">对话中读懂游客需求，<br>发现新体验与新交易机会。</h1>
+    <div class="cards value-grid">
+      <div class="card"><h3><span class="num">01</span>新服务与新体验</h3><p>以对话式服务满足个性化需求，提升游客体验。</p></div>
+      <div class="card"><h3><span class="num">02</span>新交易与消费增量</h3><p>匹配需求与产品，拓展多次消费及客单提升机会。</p></div>
+      <div class="card"><h3><span class="num">03</span>官方服务主导权</h3><p>强化信息权威，在官方渠道承接咨询、决策与交易。</p></div>
+      <div class="card"><h3><span class="num">04</span>需求洞察与产品创新</h3><p>发现未满足需求，为新产品、新服务提供依据。</p></div>
+      <div class="card"><h3><span class="num">05</span>可复制的企业能力</h3><p>沉淀服务标准与方法，支持更多业务场景落地。</p></div>
+      <div class="card"><h3><span class="num">06</span>行业标杆与示范价值</h3><p>以真实应用成果打造行业示范，提升品牌影响力。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 系统架构 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">系统架构 · ARCHITECTURE</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">在现有小程序之上，<br>增加一层智能服务能力。</h1>
+    <div class="arch">
+      <div class="arch-tier">
+        <div class="arch-label">游客随时咨询</div>
+        <div class="arch-nodes"><span>我要买票</span><span>今晚有演出吗</span><span>怎么去漂流</span><span>我想订房</span></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-tier"><div class="arch-core">智能对话功能 · 听懂 → 找到 → 跳转到对应页面</div></div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-tier">
+        <div class="arch-label">官方知识库</div>
+        <div class="arch-nodes"><span>门票价格</span><span>酒店库存</span><span>演出时刻</span><span>地图导航</span></div>
+        <div class="arch-label" style="margin-top:16px">现有业务系统</div>
+        <div class="arch-nodes dark"><span>票务系统</span><span>酒店系统</span><span>订单支付</span><span>发货系统</span></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-tier">
+        <div class="arch-label">数据库</div>
+        <div class="arch-nodes dark"><span style="grid-column:1/-1">业务数据库</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 系统架构补充：AI 服务层 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">系统架构 · AI 服务层</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">不复制功能入口，<br>把决策陪伴放进每一次询问。</h1>
+    <div class="ai-compare">
+      <div class="legacy-panel">
+        <div class="panel-overline">传统小程序的操作逻辑</div>
+        <h3>游客先判断，<br>再自己找服务。</h3>
+        <p>功能成熟，但游客需要知道“我该点哪里”。</p>
+        <div class="legacy-flow">
+          <div class="legacy-step" data-step="01">先判断自己要办什么事</div>
+          <div class="legacy-arrow">↓</div>
+          <div class="legacy-step" data-step="02">在页面与专项入口中寻找</div>
+          <div class="legacy-arrow">↓</div>
+          <div class="legacy-step" data-step="03">跳转、填写、办理各项服务</div>
+        </div>
+      </div>
+      <div class="ai-panel">
+        <div class="panel-overline">小仙的服务逻辑</div>
+        <h3>游客只管开口，<br>小仙负责判断下一步。</h3>
+        <p>从单点问答，变成贯穿出行全程的决策陪伴。</p>
+        <div class="ai-question"><span>游客说</span>“两大两小带狗自驾，10 月想来看夜景，怎么安排？”</div>
+        <div class="ai-think"><span>同行人</span><span>宠物</span><span>日期</span><span>自驾</span><span>夜游偏好</span></div>
+        <div class="ai-result">
+          <div><b>票务判断</b><span>识别适用票种与证件</span></div>
+          <div><b>停车与路线</b><span>推荐停车场并调起导航</span></div>
+          <div><b>住宿建议</b><span>按日期与同行人匹配房型</span></div>
+          <div><b>行程安排</b><span>串联夜景、演艺与餐饮</span></div>
+        </div>
+      </div>
+      <div class="compare-foundation">
+        <div class="foundation-title"><strong>借鉴迪士尼的是底座，</strong><br>中间服务层按望仙谷需求灵活调整。</div>
+        <div class="foundation-nodes">
+          <span><em>BASE 01</em>统一账户</span>
+          <span><em>BASE 02</em>业务系统与实时数据</span>
+          <span><em>BASE 03</em>订单、支付与运营协同</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 03 落地执行 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">03 · 落地执行 / EXECUTION</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">四步把现有调研，<br>转化为可验收的试点。</h1>
+    <div class="cards phase-grid">
+      <div class="card"><span class="p-num">STEP 01</span><h3>评估（1 个月）</h3><p>口径治理 · 首版知识库 · 接口评估 · 供应商比选</p></div>
+      <div class="card"><span class="p-num">STEP 02</span><h3>开发（1-3 个月）</h3><p>对话界面与后台开发，分期接入小程序内关联系统</p></div>
+      <div class="card"><span class="p-num">STEP 03</span><h3>试点（1 个月）</h3><p>上线试运行，按周复盘四项指标</p></div>
+      <div class="card"><span class="p-num">STEP 04</span><h3>决策（1 个月）</h3><p>数据汇总，形成二期依据，报高层决策</p></div>
+    </div>
+    <div class="p1-list">
+      <span class="tag">一阶段 · 六件具体的事</span>
+      <ul>
+        <li>景区政策规则化：以宠物政策为切入点，明确能带什么、怎么带</li>
+        <li>高频问题口径统一：营销、客服、运营、民宿逐领域对齐</li>
+        <li>首版知识库定稿：每条知识有责任人、版本号、生效日期</li>
+        <li>知识库管理机制：变更 48 小时内入库，旧口径同步回收</li>
+        <li>接口评估：信息部牵头梳理系统接口，出具评估报告</li>
+        <li>供应商询价比选：与商务评估并行，代码全交付为前提</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 9 04 投入产出 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">04 · 投入产出 / ROI & KPI</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">财务可核算，投入可分段，扩展有门槛。</h1>
+    <div class="cards roi-grid">
+      <div class="card plan">
+        <span class="tag">方案一 · 依托外部平台</span>
+        <ol><li>平台年费</li><li>对接开发费用</li><li>日常 Token 消耗</li></ol>
+      </div>
+      <div class="card plan">
+        <span class="tag">方案二 · 外包开发自建平台</span>
+        <ol><li>开发费用（代码全交付）</li><li>日常 Token 消耗费用</li></ol>
+      </div>
+    </div>
+    <div class="metric-row">
+      <div class="card"><h3>答案准确率</h3><p>减少错误发生：错误口径在到达游客前被拦截</p></div>
+      <div class="card"><h3>独立解决率</h3><p>放大服务价值：需求即时被满足，不排队不等人工</p></div>
+      <div class="card"><h3>单次服务成本</h3><p>核算标尺而非降本目标：AI 与人工综合成本</p></div>
+      <div class="card"><h3>转人工质量</h3><p>带齐上下文，准确说明转接原因</p></div>
+    </div>
+    <div class="gate"><b>三步验证门槛：</b>建立基线 → 周复盘对标 → 达标再扩展；一个月不达预期随时暂停，损失可控。</div>
+  </div>
+</section>
+
+<!-- 10 结束语 -->
+<section class="slide end">
+  <div class="slide-inner">
+    <div class="end-quote">统一信息是底座，升级服务是核心，<br><em>创造增量是目标。</em></div>
+    <p style="color:rgba(255,255,255,.6);font-size:18px;margin-top:26px">感谢聆听 · 望仙谷官方 AI 服务新模式立项汇报</p>
+  </div>
+</section>
+
+<!-- 11 待决策事项 -->
+<section class="slide end centered">
+  <div class="slide-inner">
+    <span class="kicker" style="color:var(--gold-bright)">待决策事项 / DECISIONS</span>
+    <h1 class="st" style="color:#fff;font-size:clamp(26px,3vw,44px)">本次需要明确</h1>
+    <div class="end-ask">
+      <div><b>01 确认立项</b><span>批准「官方智能服务试点」立项，从临时整顿转为正式治理。</span></div>
+      <div><b>02 明确机制</b><span>指定项目业务负责人与信息部技术负责人，相关部门指定确认人。</span></div>
+      <div><b>03 授权评估</b><span>授权接口评估与供应商询价；代码、文档、接口规范全部交付。</span></div>
+      <div><b>04 投入边界</b><span>小成本试点，模型调用每月可封顶；不达预期随时暂停。</span></div>
+      <div><b>05 预算审批</b><span>知识库与技术方案完成后，再提交一期预算与合同审批。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 服务全景 1/2 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">附件 · 服务全景（1/2）</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">服务全景 · 八个模块</h1>
+    <div class="cards mod-grid">
+      <div class="card">
+        <span class="tag">FLOW A · 景点介绍</span>
+        <h3>认识望仙谷，从一段会回答的介绍开始。</h3>
+        <p>针对还不了解景区的游客，Agent 用对话方式介绍望仙谷——讲清楚这里是什么、适合谁、怎么玩、值不值得来。</p>
+        <ul>
+          <li>面向初次了解的游客：景区特色与核心看点一目了然</li>
+          <li>按人群推荐玩法：亲子、情侣、长辈各有侧重</li>
+          <li>游玩时长与路线建议：半日、一日、两日游怎么安排</li>
+          <li>把「想去」变成「成行」：真实问题即时解答</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">FLOW B · 票务</span>
+        <h3>先给游客看得懂的票，再进入游客信息与支付。</h3>
+        <p>游客开口问价，Agent 直接展示票种与价格，不用层层翻菜单。</p>
+        <ul>
+          <li>直接展示成人、儿童/学生优惠、优待与免票条件</li>
+          <li>同一订单支持多位游客、不同票种</li>
+          <li>套餐以产品卡呈现，图片、内容与核销点清楚</li>
+          <li>填写游客信息后进入订单确认与微信支付</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">FLOW C · 酒店</span>
+        <h3>推荐之前，先把入住条件问完整。</h3>
+        <p>像前台一样追问日期、人数、偏好，再给出可售房型与逐日价格。</p>
+        <ul>
+          <li>入住日期、晚数、人数、儿童年龄、房型偏好、单晚预算</li>
+          <li>推荐时必须逐日查询价格和库存</li>
+          <li>只有每一晚均可售，才展示各晚价格与住宿总价</li>
+          <li>确认后进入订单填写与支付</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">FLOW D · 零售</span>
+        <h3>文创商品咨询、下单与配送，统一办理。</h3>
+        <p>从询问到下单，Agent 像导购员一样介绍商品、确认库存、办理自提或快递。</p>
+        <ul>
+          <li>展示人气文创与特色商品</li>
+          <li>支持门店自提或快递配送</li>
+          <li>库存实时查询，避免下单后缺货</li>
+          <li>与订单系统打通，统一核销</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 服务全景 2/2 -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="kicker">附件 · 服务全景（2/2）</span>
+    <h1 class="st" style="font-size:clamp(26px,3vw,44px)">服务全景 · 八个模块</h1>
+    <div class="cards mod-grid">
+      <div class="card">
+        <span class="tag">FLOW E · 餐饮</span>
+        <h3>餐厅推荐、取号与预约，对话中完成。</h3>
+        <p>根据游客位置和口味偏好推荐餐厅，直接在线取号或预约，减少排队等待。</p>
+        <ul>
+          <li>根据位置推荐附近餐厅</li>
+          <li>展示等位情况与预计等待时间</li>
+          <li>支持在线取号与预约</li>
+          <li>人均消费与特色菜品一目了然</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">FLOW F · 导览</span>
+        <h3>不扔给游客一张大地图，而是带他走到下一个地标。</h3>
+        <p>用「现在的位置」和「要去的地方」接力导航，看见一个标志物，就离目的地更近一步。</p>
+        <ul>
+          <li>先确定当前位置和目的地</li>
+          <li>给出方向、预计步行时间和连续标志物</li>
+          <li>用桥、楼、广场、店招等标志物接力引导</li>
+          <li>支持「我在XX附近」的地标模糊定位</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">FLOW G · 节目单</span>
+        <h3>演出时间、场地与导航，一次说清。</h3>
+        <p>节目时间、场地图片与导航提示一起呈现，让游客不错过每一场精彩。</p>
+        <ul>
+          <li>实时展示当日节目列表、时间与场地</li>
+          <li>点击节目直接查看详情与导航</li>
+          <li>动态调整以现场公告为准</li>
+          <li>支持「现在有什么正在演」的即时查询</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">FLOW H · 服务指引</span>
+        <h3>退改、投诉、求助，都有一个清晰的入口。</h3>
+        <p>不再让游客在菜单里找「客服中心」，有问题直接开口，Agent 引导至正确流程。</p>
+        <ul>
+          <li>退票、改签政策主动说明</li>
+          <li>订单查询支持手机号或微信关联</li>
+          <li>复杂问题直接转接人工，无需重复描述</li>
+          <li>投诉与建议统一入口，确保闭环</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<div id="lightbox" aria-hidden="true">
+  <button class="lb-close" aria-label="关闭">×</button>
+  <img src="" alt="">
+  <div class="lb-cap"></div>
+</div>
+
+<div id="hud">
+  <button class="nav-arrow" id="prev" aria-label="上一页">‹</button>
+  <div id="dots"></div>
+  <div id="counter">01 / 11</div>
+  <button class="nav-arrow" id="next" aria-label="下一页">›</button>
+</div>
+
+<script>
+var track=document.getElementById('track');
+var slides=Array.prototype.slice.call(track.children);
+var dotsBox=document.getElementById('dots');
+var counter=document.getElementById('counter');
+var progress=document.getElementById('progress');
+var index=0;
+slides.forEach(function(_,i){
+  var b=document.createElement('button');
+  b.setAttribute('aria-label','第 '+(i+1)+' 页');
+  b.addEventListener('click',function(){go(i);});
+  dotsBox.appendChild(b);
+});
+function go(i){
+  index=Math.max(0,Math.min(slides.length-1,i));
+  track.style.transform='translateX(-'+(index*100)+'vw)';
+  Array.prototype.forEach.call(dotsBox.children,function(d,k){d.classList.toggle('on',k===index);});
+  counter.textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  progress.style.width=((index+1)/slides.length*100)+'%';
+  document.getElementById('prev').disabled=index===0;
+  document.getElementById('next').disabled=index===slides.length-1;
+  if(location.hash!=='#'+(index+1)) history.replaceState(null,'','#'+(index+1));
+}
+document.getElementById('prev').addEventListener('click',function(){go(index-1);});
+document.getElementById('next').addEventListener('click',function(){go(index+1);});
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ')go(index+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(index-1);
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(slides.length-1);
+});
+var wheelLock=false;
+document.getElementById('viewport').addEventListener('wheel',function(e){
+  e.preventDefault();
+  if(wheelLock)return;
+  var d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  if(Math.abs(d)<18)return;
+  wheelLock=true;go(index+(d>0?1:-1));
+  setTimeout(function(){wheelLock=false;},650);
+},{passive:false});
+var tx=null,ty=null;
+document.getElementById('viewport').addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+document.getElementById('viewport').addEventListener('touchend',function(e){
+  if(tx===null)return;
+  var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))go(index+(dx<0?1:-1));
+  tx=ty=null;
+},{passive:true});
+var lightbox=document.getElementById('lightbox');
+var lbImg=lightbox.querySelector('img');
+var lbCap=lightbox.querySelector('.lb-cap');
+Array.prototype.forEach.call(document.querySelectorAll('.shots img'),function(img){
+  img.addEventListener('click',function(){
+    lbImg.src=img.src;
+    lbImg.alt=img.alt;
+    var cap=img.parentNode.querySelector('figcaption');
+    lbCap.textContent=cap?cap.textContent:'';
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden','false');
+  });
+});
+function closeLb(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');}
+lightbox.addEventListener('click',function(e){if(e.target!==lbImg)closeLb();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+var h=parseInt((location.hash||'').replace('#',''),10);
+go(isNaN(h)?0:h-1);
+</script>
+</body>
+</html>
